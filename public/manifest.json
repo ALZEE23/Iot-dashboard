@@ -1,0 +1,22 @@
+{
+  "name": "HidroTrack",
+  "short_name": "HidroTrack",
+  "description": "Pantau kondisi tanaman hidroponikmu secara real-time.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#e9efe1",
+  "theme_color": "#1c2a1f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
