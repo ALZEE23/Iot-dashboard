@@ -12,13 +12,15 @@ export function Desktop() {
   const [active, setActive] = useState<Tab>("Overview");
 
   return (
-    <div className="hidden lg:block min-h-dvh bg-[var(--color-bg)] p-8">
+    <div className="hidden lg:block min-h-dvh bg-[var(--color-bg)]">
       <Navbar active={active} onChange={setActive} />
 
-      {active === "Overview" && <OverviewSection />}
-      {active === "Analytics" && <AnalyticsSection />}
-      {active === "Monitoring" && <MonitoringSection />}
-      {active === "Perangkat" && <PerangkatSection />}
+      <div className="pt-24 px-8 pb-8">
+        {active === "Overview" && <OverviewSection />}
+        {active === "Analytics" && <AnalyticsSection />}
+        {active === "Monitoring" && <MonitoringSection />}
+        {active === "Perangkat" && <PerangkatSection />}
+      </div>
     </div>
   );
 }
@@ -31,29 +33,37 @@ function OverviewSection() {
           <StatRow key={stat.key} stat={stat} />
         ))}
       </div>
-      <div className="space-y-6">
-        <div className="rounded-[var(--radius-lg)] bg-[var(--color-primary)] text-white p-6 overflow-hidden">
-          <h2 className="text-2xl font-bold">
-            Hidro<span className="font-light">Track</span>
-          </h2>
-          <p className="text-sm text-white/90 mt-1 max-w-md">
-            Aplikasi untuk mencatat dan memantau perkembangan tanaman
-            hidroponik, termasuk jadwal pemberian nutrisi dan pergantian air.
-          </p>
-          <div className="mt-4 rounded-[var(--radius-md)] overflow-hidden relative h-56 bg-[var(--color-primary-dark)]">
-            <Image
-              src="/images/hidroponik.jpg"
-              alt="Instalasi hidroponik vertikal"
-              fill
-              className="object-cover"
-            />
+
+      <div>
+        <div className="rounded-[10px] overflow-hidden">
+          <div className="bg-[#779B7F] text-white p-6">
+            <h2 className="text-2xl font-bold">
+              <span className="text-[#E7EFDA]">Hidro</span>
+              <span className="text-[#0D2D1E]">Track</span>
+            </h2>
+            <p className="text-sm font-semibold text-[#E7EFDA] mt-2 max-w-md">
+              Halo, sahabat lingkungan! ingin melihat bagaimana tanamanmu tumbuh
+              sehat?
+            </p>
           </div>
+
+          <div className="bg-[#B7C9B9] h-10" />
         </div>
 
-        <HistoryList items={historyItems} title="Riwayat" />
+        <div className="mt-4 rounded-[var(--radius-md)] overflow-hidden relative h-100">
+          <Image
+            src="/images/hidroponik.jpg"
+            alt="Instalasi hidroponik vertikal"
+            fill
+            className="object-cover"
+          />
+        </div>
       </div>
 
-      <DeviceList devices={devices} />
+      <div className="space-y-6">
+        <DeviceList devices={devices} />
+        <HistoryList items={historyItems} title="Riwayat" />
+      </div>
     </div>
   );
 }

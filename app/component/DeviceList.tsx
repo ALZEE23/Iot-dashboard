@@ -9,26 +9,29 @@ export function DeviceList({
 }) {
   return (
     <section
-      className={`rounded-[var(--radius-lg)] bg-[var(--color-ink)] text-white p-4 ${className}`}
+      className={`rounded-[10px] bg-[#0D2D1E] p-4 ${className}`}
     >
-      <h3 className="text-sm font-semibold px-1 mb-2">Device Terhubung</h3>
-      <ul>
-        {devices.map((d, i) => (
+      <h3 className="text-xl font-bold text-white mb-3">Device Terhubung</h3>
+
+      <ul className="space-y-3">
+        {devices.map((d) => (
           <li
             key={d.key}
-            className={`flex items-center justify-between gap-3 px-1 py-3 ${
-              i !== devices.length - 1 ? "border-b border-white/10" : ""
-            }`}
+            className="flex items-center justify-between gap-3 rounded-2xl bg-[#B7C9B9] px-4 py-3"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <span
-                className={`h-2 w-2 rounded-full ${
-                  d.status === "Online" ? "bg-[var(--color-success)]" : "bg-white/30"
+                className={`h-3 w-3 rounded-full ${
+                  d.status === "Online" ? "bg-[#759C7F]" : "bg-[#A7A7A7]"
                 }`}
               />
-              <span className="text-sm">{d.name}</span>
+              <span className="text-base font-bold text-[#0D2D1E]">
+                {d.name}
+              </span>
             </div>
-            <span className="text-xs text-white/60">{d.lastSeen}</span>
+            <span className="text-sm font-semibold text-[#0D2D1E]/80">
+              {d.lastSeen}
+            </span>
           </li>
         ))}
       </ul>
