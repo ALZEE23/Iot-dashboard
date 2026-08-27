@@ -15,7 +15,7 @@ export interface HistoryItem {
   title: string;
   description: string;
   time: string;
-  tone: "warning" | "success" | "info";
+  tone: "warning" | "alert" | "success" | "info"; 
 }
 
 export interface DeviceItem {
