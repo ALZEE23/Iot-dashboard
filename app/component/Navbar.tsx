@@ -1,4 +1,6 @@
 import { Bell } from "lucide-react";
+import type { ConnectionSource } from "@/lib/sensorTypes";
+import { ConnectionBadge } from "./ConnectionBadge";
 
 export const TABS = ["Overview", "Analytics", "Monitoring", "Perangkat"] as const;
 export type Tab = (typeof TABS)[number];
@@ -6,9 +8,13 @@ export type Tab = (typeof TABS)[number];
 export function Navbar({
   active = "Overview",
   onChange,
+  isOnline = false,
+  source = null,
 }: {
   active?: Tab;
   onChange?: (tab: Tab) => void;
+  isOnline?: boolean;
+  source?: ConnectionSource;
 }) {
   return (
     <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-[#0D2D1E] px-6 py-3">
@@ -36,6 +42,7 @@ export function Navbar({
       </nav>
 
       <div className="flex items-center gap-3">
+        <ConnectionBadge isOnline={isOnline} source={source} className="text-white/80" />
         <button aria-label="Notifikasi" className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center">
           <Bell className="h-4 w-4 text-white" />
         </button>

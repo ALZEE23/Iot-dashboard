@@ -17,6 +17,7 @@
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.2",
     "@tanstack/react-query": "^5.102.0",
+    "firebase": "^12.18.0",
     "lucide-react": "^1.33.0",
     "mqtt": "^5.15.2",
     "next": "16.3.2",

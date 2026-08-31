@@ -1,9 +1,17 @@
+"use client";
+
 import { HistoryList } from "../component/HistoryList";
 import { StatTile } from "../component/StatCard";
 import { DeviceList } from "../component/DeviceList";
-import { mobileStats, historyItems, devices } from "@/lib/data";
+import { ConnectionBadge } from "../component/ConnectionBadge";
+import { buildMobileStats, buildHistoryItems, devices } from "@/lib/data";
+import { useSensorData } from "@/lib/useSensorData";
 
 export function Mobile() {
+  const { reading, source, isOnline, history } = useSensorData();
+  const mobileStats = buildMobileStats(reading);
+  const historyItems = buildHistoryItems(history);
+
   return (
     <div className="lg:hidden min-h-dvh bg-[var(--color-bg)] px-4 pt-6 pb-10 space-y-4">
       <div className="flex items-center justify-between">
@@ -15,7 +23,7 @@ export function Mobile() {
       </div>
 
       <div className="flex items-center justify-between px-0.5">
-        <p className="text-sm font-semibold text-[var(--color-ink)]">Kamis, 10 September 2026</p>
+        <ConnectionBadge isOnline={isOnline} source={source} className="text-[var(--color-ink)]" />
         <span className="text-sm font-semibold text-[var(--color-ink)]">09.37</span>
       </div>
 
