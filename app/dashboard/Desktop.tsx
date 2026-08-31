@@ -6,30 +6,34 @@ import { Navbar, type Tab } from "../component/Navbar";
 import { StatRow } from "../component/StatCard";
 import { HistoryList } from "../component/HistoryList";
 import { DeviceList } from "../component/DeviceList";
-import { desktopStats, historyItems, devices } from "@/lib/data";
+import { buildDesktopStats, buildHistoryItems, devices, type HistoryItem, type StatItem } from "@/lib/data";
+import { useSensorData } from "@/lib/useSensorData";
 
 export function Desktop() {
   const [active, setActive] = useState<Tab>("Overview");
+  const { reading, source, isOnline, history } = useSensorData();
+  const desktopStats = buildDesktopStats(reading);
+  const historyItems = buildHistoryItems(history);
 
   return (
     <div className="hidden lg:block min-h-dvh bg-[var(--color-bg)]">
-      <Navbar active={active} onChange={setActive} />
+      <Navbar active={active} onChange={setActive} isOnline={isOnline} source={source} />
 
       <div className="pt-24 px-8 pb-8">
-        {active === "Overview" && <OverviewSection />}
-        {active === "Analytics" && <AnalyticsSection />}
-        {active === "Monitoring" && <MonitoringSection />}
+        {active === "Overview" && <OverviewSection stats={desktopStats} history={historyItems} />}
+        {active === "Analytics" && <AnalyticsSection stats={desktopStats} />}
+        {active === "Monitoring" && <MonitoringSection history={historyItems} />}
         {active === "Perangkat" && <PerangkatSection />}
       </div>
     </div>
   );
 }
 
-function OverviewSection() {
+function OverviewSection({ stats, history }: { stats: StatItem[]; history: HistoryItem[] }) {
   return (
     <div className="grid grid-cols-[280px_1fr_300px] gap-6 items-start">
       <div className="space-y-3">
-        {desktopStats.map((stat) => (
+        {stats.map((stat) => (
           <StatRow key={stat.key} stat={stat} />
         ))}
       </div>
@@ -62,26 +66,26 @@ function OverviewSection() {
 
       <div className="space-y-6">
         <DeviceList devices={devices} />
-        <HistoryList items={historyItems} title="Riwayat" />
+        <HistoryList items={history} title="Riwayat" />
       </div>
     </div>
   );
 }
 
-function AnalyticsSection() {
+function AnalyticsSection({ stats }: { stats: StatItem[] }) {
   return (
     <div className="grid grid-cols-3 grid-rows-2 gap-4">
-      {desktopStats.map((stat) => (
+      {stats.map((stat) => (
         <StatRow key={stat.key} stat={stat} />
       ))}
     </div>
   );
 }
 
-function MonitoringSection() {
+function MonitoringSection({ history }: { history: HistoryItem[] }) {
   return (
     <div className="w-full">
-      <HistoryList items={historyItems} title="Riwayat" />
+      <HistoryList items={history} title="Riwayat" />
     </div>
   );
 }
