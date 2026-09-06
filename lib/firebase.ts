@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getDatabase, ref, onValue, query, orderByKey, limitToLast, get, type Database } from "firebase/database";
-import { isSensorReading, type HistoryRecord, type SensorReading } from "./sensorTypes";
+import { getDatabase, ref, onValue, query, orderByKey, limitToLast, get, set, type Database } from "firebase/database";
+import { isSensorReading, type HistoryRecord, type SensorReading, type ViewerRecord } from "./sensorTypes";
 
 function pathPrefix() {
   return process.env.NEXT_PUBLIC_FIREBASE_PATH_PREFIX || "sensors";
@@ -15,6 +15,15 @@ function getFirebaseDb(): Database | null {
 
   const app = getApps().length ? getApp() : initializeApp({ databaseURL });
   return getDatabase(app);
+}
+
+const FIREBASE_TIMEOUT_MS = 5000;
+
+function withTimeout<T>(promise: Promise<T>, ms = FIREBASE_TIMEOUT_MS): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error("Firebase request timed out")), ms)),
+  ]);
 }
 
 export function subscribeLatest(onReading: (reading: SensorReading | null) => void): () => void {
@@ -32,17 +41,45 @@ export async function fetchHistory(limitCount = 20): Promise<HistoryRecord[]> {
   const db = getFirebaseDb();
   if (!db) return [];
 
-  const historyQuery = query(ref(db, `${pathPrefix()}/history`), orderByKey(), limitToLast(limitCount));
-  const snapshot = await get(historyQuery);
-  if (!snapshot.exists()) return [];
+  try {
+    const historyQuery = query(ref(db, `${pathPrefix()}/history`), orderByKey(), limitToLast(limitCount));
+    const snapshot = await withTimeout(get(historyQuery));
+    if (!snapshot.exists()) return [];
 
-  const records: HistoryRecord[] = [];
-  snapshot.forEach((child) => {
-    const value = child.val();
-    if (isSensorReading(value)) {
-      records.push({ ...value, id: child.key ?? String(value.timestamp) });
-    }
+    const records: HistoryRecord[] = [];
+    snapshot.forEach((child) => {
+      const value = child.val();
+      if (isSensorReading(value)) {
+        records.push({ ...value, id: child.key ?? String(value.timestamp) });
+      }
+    });
+
+    return records.sort((a, b) => a.timestamp - b.timestamp);
+  } catch (err) {
+    console.warn("fetchHistory failed:", err);
+    return [];
+  }
+}
+
+export async function upsertViewer(clientId: string, data: Omit<ViewerRecord, "id">): Promise<void> {
+  const db = getFirebaseDb();
+  if (!db) return;
+
+  try {
+    await withTimeout(set(ref(db, `${pathPrefix()}/viewers/${clientId}`), data));
+  } catch (err) {
+    console.warn("upsertViewer failed:", err);
+  }
+}
+
+export function subscribeViewers(onViewers: (viewers: ViewerRecord[]) => void): () => void {
+  const db = getFirebaseDb();
+  if (!db) return () => {};
+
+  const viewersRef = ref(db, `${pathPrefix()}/viewers`);
+  return onValue(viewersRef, (snapshot) => {
+    const value = snapshot.val() as Record<string, Omit<ViewerRecord, "id">> | null;
+    const viewers = value ? Object.entries(value).map(([id, v]) => ({ id, ...v })) : [];
+    onViewers(viewers);
   });
-
-  return records.sort((a, b) => a.timestamp - b.timestamp);
 }

@@ -1,4 +1,4 @@
-import type { HistoryRecord, SensorReading } from "./sensorTypes";
+import type { HistoryRecord, SensorReading, ViewerRecord } from "./sensorTypes";
 
 export type StatStatus = "Normal" | "Kurang" | "Tinggi" | "Belum tersedia";
 
@@ -22,15 +22,12 @@ export interface HistoryItem {
 export interface DeviceItem {
   key: string;
   name: string;
+  ip?: string;
   status: "Online" | "Offline";
   lastSeen: string;
 }
 
-export const devices: DeviceItem[] = [
-  { key: "d1", name: "Realme C12", status: "Online", lastSeen: "17.00" },
-  { key: "d2", name: "Poco M3", status: "Online", lastSeen: "12.00" },
-  { key: "d3", name: "Poco M3", status: "Offline", lastSeen: "19/08/2026 12.00" },
-];
+const VIEWER_STALE_AFTER_SECONDS = 30;
 
 const RANGES = {
   water_temp_c: { min: 20, max: 28, label: "Range 20°C - 28°C" },
@@ -135,7 +132,7 @@ export function buildMobileStats(reading: SensorReading | null): StatItem[] {
     LEVEL_AIR_PLACEHOLDER,
     {
       key: "nutrisi",
-      label: "Nutrisi (TDS)",
+      label: "Nutrisi",
       value: formatPpm(tds),
       status: statusFor(tds, RANGES.tds_ppm),
       icon: "leaf",
@@ -171,7 +168,7 @@ export function buildMobileStats(reading: SensorReading | null): StatItem[] {
   ];
 }
 
-function formatHistoryTime(timestamp: number): string {
+export function formatHistoryTime(timestamp: number): string {
   if (!timestamp) return "—";
   return new Date(timestamp * 1000).toLocaleTimeString("id-ID", {
     hour: "2-digit",
@@ -234,4 +231,19 @@ export function buildHistoryItems(history: HistoryRecord[], limit = 8): HistoryI
   }
 
   return items.slice(0, limit);
+}
+
+export function buildDevices(viewers: ViewerRecord[], limit = 5): DeviceItem[] {
+  const nowSeconds = Date.now() / 1000;
+
+  return [...viewers]
+    .sort((a, b) => b.lastSeen - a.lastSeen)
+    .slice(0, limit)
+    .map((v) => ({
+      key: v.id,
+      name: v.label || v.ip,
+      ip: v.label ? v.ip : undefined,
+      status: nowSeconds - v.lastSeen < VIEWER_STALE_AFTER_SECONDS ? "Online" : "Offline",
+      lastSeen: formatHistoryTime(v.lastSeen),
+    }));
 }

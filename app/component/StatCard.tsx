@@ -1,32 +1,6 @@
-import type { StatItem, StatStatus } from "@/lib/data";
+import type { StatItem } from "@/lib/data";
+import { STATUS_STYLE } from "@/lib/statusStyle";
 import { StatIcon } from "./StatIcon";
-
-const STATUS_STYLE: Record<StatStatus, { bg: string; text: string; badge: string; iconCircle: boolean }> = {
-  Normal: {
-    bg: "bg-[var(--color-success)]",
-    text: "text-white",
-    badge: "bg-white/20 text-white",
-    iconCircle: false,
-  },
-  Kurang: {
-    bg: "bg-[var(--color-warning)]",
-    text: "text-[#0D2D1E]",
-    badge: "bg-black/10 text-[#0D2D1E]",
-    iconCircle: false,
-  },
-  Tinggi: {
-    bg: "bg-[var(--color-red)]",
-    text: "text-white",
-    badge: "bg-white/20 text-white",
-    iconCircle: true,
-  },
-  "Belum tersedia": {
-    bg: "bg-[var(--color-muted)]",
-    text: "text-white",
-    badge: "bg-white/20 text-white",
-    iconCircle: false,
-  },
-};
 
 function statusStyle(stat: StatItem) {
   return STATUS_STYLE[stat.status ?? "Normal"];
@@ -37,21 +11,21 @@ export function StatTile({ stat }: { stat: StatItem }) {
 
   return (
     <div
-      className={`relative flex flex-col justify-between rounded-[14px] p-4 h-45 ${style.bg} ${style.text}`}
+      className={`relative flex min-w-0 flex-col justify-between overflow-hidden rounded-[14px] p-4 h-45 ${style.bg} ${style.text}`}
     >
-      <div className="flex items-start justify-between gap-1">
-        <span className="text-[25px] font-semibold leading-tight">{stat.label}</span>
-
+      <div>
         {style.iconCircle ? (
-          <span className="h-6 w-6 shrink-0 rounded-full bg-white flex items-center justify-center">
+          <span className="float-right ml-1 h-6 w-6 shrink-0 rounded-full bg-white flex items-center justify-center">
             <StatIcon name={stat.icon} className="h-4 w-4 text-[var(--color-red)]" />
           </span>
         ) : (
-          <StatIcon name={stat.icon} className="h-6 w-6 opacity-80 shrink-0" />
+          <StatIcon name={stat.icon} className="float-right ml-1 h-6 w-6 opacity-80 shrink-0" />
         )}
+
+        <span className="text-[17px] font-semibold leading-tight">{stat.label}</span>
       </div>
 
-      <p className="text-[28px] font-bold leading-none">{stat.value}</p>
+      <p className="wrap-break-word text-[24px] font-bold leading-none">{stat.value}</p>
     </div>
   );
 }

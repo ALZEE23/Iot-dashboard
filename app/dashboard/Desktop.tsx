@@ -6,30 +6,41 @@ import { Navbar, type Tab } from "../component/Navbar";
 import { StatRow } from "../component/StatCard";
 import { HistoryList } from "../component/HistoryList";
 import { DeviceList } from "../component/DeviceList";
-import { buildDesktopStats, buildHistoryItems, devices, type HistoryItem, type StatItem } from "@/lib/data";
+import { buildDesktopStats, buildHistoryItems, buildDevices, type DeviceItem, type HistoryItem, type StatItem } from "@/lib/data";
 import { useSensorData } from "@/lib/useSensorData";
+import { useViewers } from "@/lib/useViewers";
 
 export function Desktop() {
   const [active, setActive] = useState<Tab>("Overview");
   const { reading, source, isOnline, history } = useSensorData();
+  const viewers = useViewers();
   const desktopStats = buildDesktopStats(reading);
   const historyItems = buildHistoryItems(history);
+  const deviceItems = buildDevices(viewers);
 
   return (
     <div className="hidden lg:block min-h-dvh bg-[var(--color-bg)]">
       <Navbar active={active} onChange={setActive} isOnline={isOnline} source={source} />
 
-      <div className="pt-24 px-8 pb-8">
-        {active === "Overview" && <OverviewSection stats={desktopStats} history={historyItems} />}
+      <div className="pt-24 px-8 pb-8 max-w-6xl mx-auto">
+        {active === "Overview" && <OverviewSection stats={desktopStats} history={historyItems} devices={deviceItems} />}
         {active === "Analytics" && <AnalyticsSection stats={desktopStats} />}
         {active === "Monitoring" && <MonitoringSection history={historyItems} />}
-        {active === "Perangkat" && <PerangkatSection />}
+        {active === "Perangkat" && <PerangkatSection devices={deviceItems} />}
       </div>
     </div>
   );
 }
 
-function OverviewSection({ stats, history }: { stats: StatItem[]; history: HistoryItem[] }) {
+function OverviewSection({
+  stats,
+  history,
+  devices,
+}: {
+  stats: StatItem[];
+  history: HistoryItem[];
+  devices: DeviceItem[];
+}) {
   return (
     <div className="grid grid-cols-[280px_1fr_300px] gap-6 items-start">
       <div className="space-y-3">
@@ -90,7 +101,7 @@ function MonitoringSection({ history }: { history: HistoryItem[] }) {
   );
 }
 
-function PerangkatSection() {
+function PerangkatSection({ devices }: { devices: DeviceItem[] }) {
   return (
     <div className="w-full">
       <DeviceList devices={devices} />
