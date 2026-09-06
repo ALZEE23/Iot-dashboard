@@ -13,6 +13,13 @@ export interface HistoryRecord extends SensorReading {
   id: string;
 }
 
+export interface ViewerRecord {
+  id: string;
+  ip: string;
+  label: string;
+  lastSeen: number;
+}
+
 export function isSensorReading(value: unknown): value is SensorReading {
   if (typeof value !== "object" || value === null) return false;
   const r = value as Record<string, unknown>;

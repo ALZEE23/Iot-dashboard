@@ -69,9 +69,10 @@ client.on("message", (_topic, payload) => {
 });
 ```
 
-### 2. Firebase Realtime Database (histori) — **belum di-install**
+### 2. Firebase Realtime Database (histori)
 
-- `npm install firebase`
+- Cara bikin project & Database-nya dari nol (plan gratis/Spark): lihat
+  [`FIREBASE_SETUP.md`](FIREBASE_SETUP.md).
 - Path: `<Database URL>/<path-prefix>/latest.json` (snapshot terakhir) dan
   `.../history/<unix_ts>.json` (tiap entri histori, key = unix timestamp).
   Default path prefix: `sensors`.

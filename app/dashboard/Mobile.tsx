@@ -4,22 +4,23 @@ import { HistoryList } from "../component/HistoryList";
 import { StatTile } from "../component/StatCard";
 import { DeviceList } from "../component/DeviceList";
 import { ConnectionBadge } from "../component/ConnectionBadge";
-import { buildMobileStats, buildHistoryItems, devices } from "@/lib/data";
+import { StatusLegendButton } from "../component/StatusLegend";
+import { buildMobileStats, buildHistoryItems, buildDevices } from "@/lib/data";
 import { useSensorData } from "@/lib/useSensorData";
+import { useViewers } from "@/lib/useViewers";
 
 export function Mobile() {
   const { reading, source, isOnline, history } = useSensorData();
+  const viewers = useViewers();
   const mobileStats = buildMobileStats(reading);
   const historyItems = buildHistoryItems(history);
+  const deviceItems = buildDevices(viewers);
 
   return (
     <div className="lg:hidden min-h-dvh bg-[var(--color-bg)] px-4 pt-6 pb-10 space-y-4">
       <div className="flex items-center justify-between">
         <div className="h-14 w-14 rounded-full bg-[var(--color-ink)]" />
-        <div className="flex items-center gap-2.5">
-          <div className="h-14 w-14 rounded-[10px] bg-[var(--color-ink)]" />
-          <div className="h-14 w-14 rounded-[10px] bg-[var(--color-ink)]" />
-        </div>
+        <StatusLegendButton className="h-14 w-14 rounded-[10px] bg-[var(--color-ink)] flex items-center justify-center" />
       </div>
 
       <div className="flex items-center justify-between px-0.5">
@@ -49,7 +50,7 @@ export function Mobile() {
       </div>
 
       <HistoryList items={historyItems} />
-      <DeviceList devices={devices} />
+      <DeviceList devices={deviceItems} />
     </div>
   );
 }

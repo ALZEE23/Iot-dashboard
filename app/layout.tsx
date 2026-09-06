@@ -38,7 +38,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className={jakarta.variable}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased" suppressHydrationWarning>{children}</body>
     </html>
   );
 }
