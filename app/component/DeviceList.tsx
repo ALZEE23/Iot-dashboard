@@ -9,15 +9,15 @@ export function DeviceList({
 }) {
   return (
     <section
-      className={`rounded-[10px] bg-[#0D2D1E] p-4 ${className}`}
+      className={`flex flex-col rounded-[10px] bg-[#0D2D1E] p-4 ${className}`}
     >
-      <h3 className="text-xl font-bold text-white mb-3">Device Terhubung</h3>
+      <h3 className="text-xl font-bold text-white mb-3 shrink-0">Device Terhubung</h3>
 
       {devices.length === 0 && (
         <p className="text-sm text-white/60">Belum ada device yang terdeteksi.</p>
       )}
 
-      <ul className="space-y-3">
+      <ul className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
         {devices.map((d) => (
           <li
             key={d.key}
