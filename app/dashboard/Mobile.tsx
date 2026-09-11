@@ -43,13 +43,13 @@ export function Mobile() {
         <div className="h-12 bg-[var(--color-primary-soft)]" />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {mobileStats.map((stat) => (
           <StatTile key={stat.key} stat={stat} />
         ))}
       </div>
 
-      <HistoryList items={historyItems} />
+      <HistoryList items={historyItems} className="h-120" />
       <DeviceList devices={deviceItems} />
     </div>
   );

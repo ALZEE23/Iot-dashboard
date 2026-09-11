@@ -101,7 +101,7 @@ export function buildDesktopStats(reading: SensorReading | null): StatItem[] {
       status: statusFor(tds, RANGES.tds_ppm),
       icon: "leaf",
     },
-    LEVEL_AIR_PLACEHOLDER,
+    // LEVEL_AIR_PLACEHOLDER, // TODO: aktifkan lagi kalau sensor level air sudah ada
     {
       key: "suhu-udara",
       label: "Suhu Udara",
@@ -129,11 +129,12 @@ export function buildMobileStats(reading: SensorReading | null): StatItem[] {
   const humidity = reading?.air_humidity_pct ?? null;
 
   return [
-    LEVEL_AIR_PLACEHOLDER,
+    // LEVEL_AIR_PLACEHOLDER, // TODO: aktifkan lagi kalau sensor level air sudah ada
     {
       key: "nutrisi",
       label: "Nutrisi",
       value: formatPpm(tds),
+      range: RANGES.tds_ppm.label,
       status: statusFor(tds, RANGES.tds_ppm),
       icon: "leaf",
     },
@@ -141,6 +142,7 @@ export function buildMobileStats(reading: SensorReading | null): StatItem[] {
       key: "suhu-air",
       label: "Suhu air",
       value: formatTemp(waterTemp),
+      range: RANGES.water_temp_c.label,
       status: statusFor(waterTemp, RANGES.water_temp_c),
       icon: "thermometer",
     },
@@ -148,6 +150,7 @@ export function buildMobileStats(reading: SensorReading | null): StatItem[] {
       key: "ph-air",
       label: "pH air",
       value: formatPh(ph),
+      range: RANGES.ph.label,
       status: statusFor(ph, RANGES.ph),
       icon: "droplet",
     },
@@ -155,6 +158,7 @@ export function buildMobileStats(reading: SensorReading | null): StatItem[] {
       key: "suhu-udara",
       label: "Suhu udara",
       value: formatTemp(airTemp),
+      range: RANGES.air_temp_c.label,
       status: statusFor(airTemp, RANGES.air_temp_c),
       icon: "thermometer",
     },
@@ -162,6 +166,7 @@ export function buildMobileStats(reading: SensorReading | null): StatItem[] {
       key: "air-humidity",
       label: "RH udara",
       value: formatPercent(humidity),
+      range: RANGES.air_humidity_pct.label,
       status: statusFor(humidity, RANGES.air_humidity_pct),
       icon: "gauge",
     },

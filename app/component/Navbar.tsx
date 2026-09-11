@@ -1,6 +1,6 @@
-import { Bell } from "lucide-react";
 import type { ConnectionSource } from "@/lib/sensorTypes";
 import { ConnectionBadge } from "./ConnectionBadge";
+import { StatusLegendButton } from "./StatusLegend";
 
 export const TABS = ["Overview", "Analytics", "Monitoring", "Perangkat"] as const;
 export type Tab = (typeof TABS)[number];
@@ -44,10 +44,7 @@ export function Navbar({
 
         <div className="flex items-center gap-3">
           <ConnectionBadge isOnline={isOnline} source={source} className="text-white/80" />
-          <button aria-label="Notifikasi" className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center">
-            <Bell className="h-4 w-4 text-white" />
-          </button>
-          <div className="h-9 w-9 rounded-full bg-white" />
+          <StatusLegendButton className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center" />
           <div className="flex flex-col items-end leading-tight text-xs">
             <span className="text-white font-semibold mb-2">Kamis, 10 Sep 2026</span>
             <span className="text-white/60">09.37 WIB</span>
