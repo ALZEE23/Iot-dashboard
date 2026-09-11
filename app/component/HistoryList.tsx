@@ -43,12 +43,21 @@ export function HistoryList({
 }) {
   return (
     <section
-      className={`rounded-[10px] bg-[#779B7F] p-4 ${className}`}
+      className={`flex flex-col rounded-[10px] bg-[#779B7F] p-4 ${className}`}
     >
-      <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
+      <h3 className="text-xl font-bold text-white mb-3 shrink-0">{title}</h3>
 
-      <ul className="space-y-3">
-        {items.map((item) => {
+      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+        <HistoryItems items={items} />
+      </div>
+    </section>
+  );
+}
+
+export function HistoryItems({ items }: { items: HistoryItem[] }) {
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => {
           const meta = TONE_META[item.tone];
           const Icon = meta.icon;
           return (
@@ -79,7 +88,6 @@ export function HistoryList({
             </li>
           );
         })}
-      </ul>
-    </section>
+    </ul>
   );
 }

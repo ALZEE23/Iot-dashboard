@@ -25,7 +25,15 @@ export function StatTile({ stat }: { stat: StatItem }) {
         <span className="text-[17px] font-semibold leading-tight">{stat.label}</span>
       </div>
 
-      <p className="wrap-break-word text-[24px] font-bold leading-none">{stat.value}</p>
+      <div>
+        <p className="wrap-break-word text-[24px] font-bold leading-none">{stat.value}</p>
+        <div className="flex items-center justify-between gap-2 mt-2">
+          <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium shrink-0 ${style.badge}`}>
+            {stat.status ?? "Normal"}
+          </span>
+          {stat.range && <span className="text-[11px] opacity-70 truncate">{stat.range}</span>}
+        </div>
+      </div>
     </div>
   );
 }
