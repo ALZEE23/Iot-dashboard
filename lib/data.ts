@@ -181,6 +181,24 @@ export function formatHistoryTime(timestamp: number): string {
   });
 }
 
+export function formatClockDate(date: Date): string {
+  return date.toLocaleDateString("id-ID", {
+    timeZone: "Asia/Jakarta",
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+export function formatClockTime(date: Date): string {
+  return date.toLocaleTimeString("id-ID", {
+    timeZone: "Asia/Jakarta",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function buildHistoryItems(history: HistoryRecord[], limit = 8): HistoryItem[] {
   const items: HistoryItem[] = [];
 

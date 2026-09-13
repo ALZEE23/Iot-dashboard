@@ -10,10 +10,12 @@ import { isSensorReading, type ConnectionSource, type HistoryRecord, type Sensor
 const STALE_AFTER_SECONDS = 30;
 const HISTORY_POLL_MS = 30_000;
 const HISTORY_LIMIT = 20;
+const INITIAL_DATA_TIMEOUT_MS = 10_000;
 
 export function useSensorData() {
   const [mqttReading, setMqttReading] = useState<SensorReading | null>(null);
   const [mqttConnected, setMqttConnected] = useState(false);
+  const [initialWaitTimedOut, setInitialWaitTimedOut] = useState(false);
   const { reading: localReading, isAvailable: localAvailable } = useLocalNetwork();
 
   const [history, setHistory] = useState<HistoryRecord[]>([]);
@@ -28,6 +30,7 @@ export function useSensorData() {
 
     client.on("connect", () => setMqttConnected(true));
     client.on("close", () => setMqttConnected(false));
+    client.on("error", (err) => console.warn("MQTT connection error:", err.message));
     client.on("message", (_topic, payload) => {
       try {
         const data = JSON.parse(payload.toString());
@@ -41,6 +44,11 @@ export function useSensorData() {
       client.end(true);
       clientRef.current = null;
     };
+  }, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setInitialWaitTimedOut(true), INITIAL_DATA_TIMEOUT_MS);
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
@@ -94,5 +102,7 @@ export function useSensorData() {
     return () => clearInterval(interval);
   }, [mqttConnected, localAvailable, reading]);
 
-  return { reading, source, isOnline, history, isLoadingHistory };
+  const isConnecting = !reading && !initialWaitTimedOut;
+
+  return { reading, source, isOnline, history, isLoadingHistory, isConnecting };
 }

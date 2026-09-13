@@ -4,17 +4,28 @@ import { HistoryList } from "../component/HistoryList";
 import { StatTile } from "../component/StatCard";
 import { DeviceList } from "../component/DeviceList";
 import { ConnectionBadge } from "../component/ConnectionBadge";
+import { ConnectingScreen } from "../component/ConnectingScreen";
 import { StatusLegendButton } from "../component/StatusLegend";
-import { buildMobileStats, buildHistoryItems, buildDevices } from "@/lib/data";
+import { buildMobileStats, buildHistoryItems, buildDevices, formatClockTime } from "@/lib/data";
 import { useSensorData } from "@/lib/useSensorData";
 import { useViewers } from "@/lib/useViewers";
+import { useLiveClock } from "@/lib/useLiveClock";
 
 export function Mobile() {
-  const { reading, source, isOnline, history } = useSensorData();
+  const { reading, source, isOnline, history, isConnecting } = useSensorData();
   const viewers = useViewers();
+  const now = useLiveClock();
   const mobileStats = buildMobileStats(reading);
   const historyItems = buildHistoryItems(history);
   const deviceItems = buildDevices(viewers);
+
+  if (isConnecting) {
+    return (
+      <div className="lg:hidden min-h-dvh bg-[var(--color-bg)]">
+        <ConnectingScreen />
+      </div>
+    );
+  }
 
   return (
     <div className="lg:hidden min-h-dvh bg-[var(--color-bg)] px-4 pt-6 pb-10 space-y-4">
@@ -25,7 +36,7 @@ export function Mobile() {
 
       <div className="flex items-center justify-between px-0.5">
         <ConnectionBadge isOnline={isOnline} source={source} className="text-[var(--color-ink)]" />
-        <span className="text-sm font-semibold text-[var(--color-ink)]">09.37</span>
+        <span className="text-sm font-semibold text-[var(--color-ink)]">{now ? formatClockTime(now) : "--.--"}</span>
       </div>
 
       <div className="rounded-[10px] bg-[var(--color-primary)] h-60 text-white overflow-hidden flex flex-col">
