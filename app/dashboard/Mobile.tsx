@@ -5,6 +5,7 @@ import { StatTile } from "../component/StatCard";
 import { DeviceList } from "../component/DeviceList";
 import { ConnectionBadge } from "../component/ConnectionBadge";
 import { ConnectingScreen } from "../component/ConnectingScreen";
+import { NetworkSwitchButton } from "../component/NetworkSwitchButton";
 import { StatusLegendButton } from "../component/StatusLegend";
 import { buildMobileStats, buildHistoryItems, buildDevices, formatClockTime } from "@/lib/data";
 import { useSensorData } from "@/lib/useSensorData";
@@ -30,7 +31,11 @@ export function Mobile() {
   return (
     <div className="lg:hidden min-h-dvh bg-[var(--color-bg)] px-4 pt-6 pb-10 space-y-4">
       <div className="flex items-center justify-between">
-        <div className="h-14 w-14 rounded-full bg-[var(--color-ink)]" />
+        <NetworkSwitchButton
+          isOnline={isOnline}
+          source={source}
+          className="h-14 w-14 rounded-full bg-[var(--color-ink)] flex items-center justify-center"
+        />
         <StatusLegendButton className="h-14 w-14 rounded-[10px] bg-[var(--color-ink)] flex items-center justify-center" />
       </div>
 
