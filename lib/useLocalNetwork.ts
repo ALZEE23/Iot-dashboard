@@ -3,11 +3,21 @@
 import { useEffect, useState } from "react";
 import { isSensorReading, type SensorReading } from "./sensorTypes";
 
-const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL || "http://192.168.4.1";
+const ESP32_AP_URL = "http://192.168.4.1";
+const CANDIDATE_URLS = Array.from(
+  new Set([process.env.NEXT_PUBLIC_LOCAL_API_URL, ESP32_AP_URL].filter((url): url is string => Boolean(url)))
+);
 const POLL_INTERVAL_MS = 5000;
 const FETCH_TIMEOUT_MS = 2500;
 
-export function useLocalNetwork(baseUrl: string = DEFAULT_BASE_URL) {
+async function fetchReadingFrom(baseUrl: string, signal: AbortSignal): Promise<SensorReading> {
+  const res = await fetch(`${baseUrl}/api/sensors`, { signal });
+  const data = await res.json();
+  if (!isSensorReading(data)) throw new Error("payload bukan sensor reading yang valid");
+  return data;
+}
+
+export function useLocalNetwork() {
   const [reading, setReading] = useState<SensorReading | null>(null);
   const [isAvailable, setIsAvailable] = useState(false);
 
@@ -18,15 +28,14 @@ export function useLocalNetwork(baseUrl: string = DEFAULT_BASE_URL) {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       try {
-        const res = await fetch(`${baseUrl}/api/sensors`, { signal: controller.signal });
-        const data = await res.json();
+        // Coba semua kandidat IP ESP32 bareng (IP hotspot AP & IP STA WiFi rumah
+        // kalau dikonfigurasi) -- cuma satu yang bakal kejangkau tergantung
+        // device ini lagi nyambung ke jaringan yang mana, jadi nggak perlu
+        // ganti-ganti env var manual tiap pindah mode.
+        const data = await Promise.any(CANDIDATE_URLS.map((url) => fetchReadingFrom(url, controller.signal)));
         if (cancelled) return;
-        if (isSensorReading(data)) {
-          setReading(data);
-          setIsAvailable(true);
-        } else {
-          setIsAvailable(false);
-        }
+        setReading(data);
+        setIsAvailable(true);
       } catch {
         if (!cancelled) setIsAvailable(false);
       } finally {
@@ -41,7 +50,7 @@ export function useLocalNetwork(baseUrl: string = DEFAULT_BASE_URL) {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [baseUrl]);
+  }, []);
 
   return { reading, isAvailable };
 }
