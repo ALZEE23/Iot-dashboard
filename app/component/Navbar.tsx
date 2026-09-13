@@ -1,6 +1,10 @@
+"use client";
+
 import type { ConnectionSource } from "@/lib/sensorTypes";
 import { ConnectionBadge } from "./ConnectionBadge";
 import { StatusLegendButton } from "./StatusLegend";
+import { formatClockDate, formatClockTime } from "@/lib/data";
+import { useLiveClock } from "@/lib/useLiveClock";
 
 export const TABS = ["Overview", "Analytics", "Monitoring", "Perangkat"] as const;
 export type Tab = (typeof TABS)[number];
@@ -16,6 +20,8 @@ export function Navbar({
   isOnline?: boolean;
   source?: ConnectionSource;
 }) {
+  const now = useLiveClock();
+
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-[#0D2D1E] px-6 py-3">
       <div className="flex max-w-6xl mx-auto items-center justify-between">
@@ -46,8 +52,8 @@ export function Navbar({
           <ConnectionBadge isOnline={isOnline} source={source} className="text-white/80" />
           <StatusLegendButton className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center" />
           <div className="flex flex-col items-end leading-tight text-xs">
-            <span className="text-white font-semibold mb-2">Kamis, 10 Sep 2026</span>
-            <span className="text-white/60">09.37 WIB</span>
+            <span className="text-white font-semibold mb-2">{now ? formatClockDate(now) : "—"}</span>
+            <span className="text-white/60">{now ? `${formatClockTime(now)} WIB` : "—"}</span>
           </div>
         </div>
       </div>

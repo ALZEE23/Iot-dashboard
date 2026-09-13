@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Navbar, type Tab } from "../component/Navbar";
+import { ConnectingScreen } from "../component/ConnectingScreen";
 import { StatRow } from "../component/StatCard";
 import { HistoryList, HistoryItems } from "../component/HistoryList";
 import { DeviceList } from "../component/DeviceList";
@@ -13,11 +14,19 @@ import { useViewers } from "@/lib/useViewers";
 
 export function Desktop() {
   const [active, setActive] = useState<Tab>("Overview");
-  const { reading, source, isOnline, history } = useSensorData();
+  const { reading, source, isOnline, history, isConnecting } = useSensorData();
   const viewers = useViewers();
   const desktopStats = buildDesktopStats(reading);
   const historyItems = buildHistoryItems(history);
   const deviceItems = buildDevices(viewers);
+
+  if (isConnecting) {
+    return (
+      <div className="hidden lg:block min-h-dvh bg-[var(--color-bg)]">
+        <ConnectingScreen />
+      </div>
+    );
+  }
 
   return (
     <div className="hidden lg:block min-h-dvh bg-[var(--color-bg)]">
